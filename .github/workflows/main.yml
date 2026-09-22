@@ -1,0 +1,32 @@
+name: Descompactar site modular
+
+on:
+  push:
+    paths:
+      - 'China_2026_VERCEL_TESTE.zip'
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Descompactar pacote
+        run: |
+          mkdir -p /tmp/site
+          unzip -q China_2026_VERCEL_TESTE.zip -d /tmp/site
+          cp -R /tmp/site/. .
+          rm -f China_2026_VERCEL_TESTE.zip
+
+      - name: Salvar estrutura do site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Extrair estrutura modular do site"
+          git push
